@@ -22,21 +22,29 @@
             <div>
                 <label class="block text-sm font-bold text-stone-700 mb-1">Daftar Sebagai</label>
                 <div class="grid grid-cols-2 gap-4">
-                    <label class="cursor-pointer">
-                        <input type="radio" wire:model="role" value="buyer" class="peer sr-only">
-                        <div class="p-3 text-center border-2 border-stone-200 rounded-lg peer-checked:border-amber-600 peer-checked:bg-amber-50 hover:bg-stone-50 transition">
-                            <i class="fa-solid fa-bag-shopping mb-1 text-stone-500 peer-checked:text-amber-600"></i>
-                            <div class="font-bold text-sm text-stone-600 peer-checked:text-amber-800">Pembeli</div>
+                    
+                    <label class="cursor-pointer group">
+                        <input type="radio" wire:model="role" name="role" value="buyer" class="peer sr-only">
+                        
+                        <div class="p-4 text-center border-2 border-stone-200 rounded-xl bg-white 
+                                    peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-900 
+                                    group-hover:border-stone-300 transition-all duration-200">
+                            <i class="fa-solid fa-bag-shopping text-xl mb-2 text-stone-400 peer-checked:text-amber-600"></i>
+                            <div class="font-bold text-sm">Pembeli</div>
                         </div>
                     </label>
 
-                    <label class="cursor-pointer">
-                        <input type="radio" wire:model="role" value="artist" class="peer sr-only">
-                        <div class="p-3 text-center border-2 border-stone-200 rounded-lg peer-checked:border-amber-600 peer-checked:bg-amber-50 hover:bg-stone-50 transition">
-                            <i class="fa-solid fa-palette mb-1 text-stone-500 peer-checked:text-amber-600"></i>
-                            <div class="font-bold text-sm text-stone-600 peer-checked:text-amber-800">Seniman</div>
+                    <label class="cursor-pointer group">
+                        <input type="radio" wire:model="role" name="role" value="artist" class="peer sr-only">
+                        
+                        <div class="p-4 text-center border-2 border-stone-200 rounded-xl bg-white 
+                                    peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-900 
+                                    group-hover:border-stone-300 transition-all duration-200">
+                            <i class="fa-solid fa-palette text-xl mb-2 text-stone-400 peer-checked:text-amber-600"></i>
+                            <div class="font-bold text-sm">Seniman</div>
                         </div>
                     </label>
+
                 </div>
             </div>
 
