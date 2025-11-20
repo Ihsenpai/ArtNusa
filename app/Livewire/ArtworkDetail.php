@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Artwork;
+use App\Models\Cart;
 use App\Models\Transaction;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
@@ -11,36 +12,78 @@ use Illuminate\Support\Facades\Auth;
 class ArtworkDetail extends Component
 {
     public $artwork;
-    public $successMessage = '';
+    
+    // Variabel untuk Popup Pembayaran
+    public $showPaymentModal = false; 
+    public $paymentMethod = 'transfer';
 
     public function mount($id)
     {
         $this->artwork = Artwork::with(['user', 'certificate'])->findOrFail($id);
     }
 
-    public function buyNow()
+    // LOGIC 1: MASUK KERANJANG
+    public function addToCart()
     {
-        // Logic Pembelian Sederhana
-        // Kita pakai user dummy ID 2 (Kolektor Sari) dari seeder jika belum login
-        // Di real project, ganti Auth::id()
-        $buyerId = Auth::id() ?? 3; 
+        // Wajib Login
+        if(!Auth::check()) return redirect()->route('login');
 
+        // Proteksi: Seniman tidak boleh beli karya sendiri
+        if(Auth::id() == $this->artwork->user_id) {
+            session()->flash('error', 'Anda tidak dapat membeli karya Anda sendiri.');
+            return;
+        }
+
+        // Cek duplikasi di keranjang
+        $exists = Cart::where('user_id', Auth::id())
+                      ->where('artwork_id', $this->artwork->id)->exists();
+
+        if(!$exists) {
+            Cart::create([
+                'user_id' => Auth::id(),
+                'artwork_id' => $this->artwork->id
+            ]);
+            
+            // Refresh halaman agar badge keranjang di navbar update
+            return redirect()->route('artwork.detail', $this->artwork->id);
+        }
+    }
+
+    // LOGIC 2: BUKA POPUP BAYAR (BELI LANGSUNG)
+    public function openPaymentModal()
+    {
+        if(!Auth::check()) return redirect()->route('login');
+
+        // Proteksi Karya Sendiri
+        if(Auth::id() == $this->artwork->user_id) {
+            return; 
+        }
+
+        $this->showPaymentModal = true;
+    }
+
+    // LOGIC 3: PROSES BAYAR (SETELAH PILIH METODE DI POPUP)
+    public function processPayment()
+    {
         $price = $this->artwork->price;
-        $fee = $price * 0.10; // 10% Platform
-        $revenue = $price - $fee; // 90% Artist
-
+        
         Transaction::create([
             'invoice_code' => 'INV-' . strtoupper(Str::random(8)),
-            'buyer_id' => $buyerId,
+            'buyer_id' => Auth::id(),
             'artwork_id' => $this->artwork->id,
             'total_price' => $price,
-            'platform_fee' => $fee,
-            'artist_revenue' => $revenue,
+            'platform_fee' => $price * 0.1, // 10% Fee
+            'artist_revenue' => $price * 0.9, // 90% Seniman
             'status' => 'pending',
         ]);
 
+        // Tandai Terjual
         $this->artwork->update(['status' => 'sold']);
-        $this->successMessage = "Pesanan berhasil dibuat! Silakan lakukan pembayaran.";
+        
+        $this->showPaymentModal = false;
+        
+        // Redirect ke Home (atau halaman transaksi jika sudah ada)
+        return redirect()->route('home');
     }
 
     public function render()

@@ -13,6 +13,7 @@ use App\Livewire\UserProfile;   // Profil & Ganti Password
 use App\Livewire\UploadArtwork; // Upload Karya Baru
 use App\Livewire\MyArtworks;    // Daftar Karya Saya (Seniman)
 use App\Livewire\EditArtwork;   // Edit Karya (Seniman)
+use App\Livewire\CartPage;      // Keranjang Belanja (BARU)
 
 /*
 |--------------------------------------------------------------------------
@@ -44,11 +45,14 @@ Route::middleware('auth')->group(function () {
     
     // --- FITUR UMUM (Buyer & Artist) ---
 
-    // Detail Karya (Sekarang user wajib login kalau mau lihat detail/beli)
+    // Detail Karya (Wajib login untuk lihat detail & beli)
     Route::get('/karya/{id}', ArtworkDetail::class)->name('artwork.detail');
 
     // Halaman Profil (Edit Biodata, Password, Hapus Akun)
     Route::get('/profile', UserProfile::class)->name('profile');
+
+    // Keranjang Belanja (BARU DITAMBAHKAN)
+    Route::get('/cart', CartPage::class)->name('cart');
 
 
     // --- FITUR KHUSUS SENIMAN ---

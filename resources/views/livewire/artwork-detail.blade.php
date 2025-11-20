@@ -1,20 +1,24 @@
 <div class="max-w-6xl mx-auto px-4 py-12">
+    
+    @if (session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6 font-bold text-center">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
         
         <div>
             <div class="rounded-2xl overflow-hidden shadow-2xl border border-stone-200 bg-white p-2">
                 <img src="{{ asset('storage/'.$artwork->image_path) }}" class="w-full rounded-xl">
             </div>
-
             <div class="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-4">
                 <div class="bg-white p-3 rounded-full shadow-sm text-amber-600">
                     <i class="fa-solid fa-shield-halved text-2xl"></i>
                 </div>
                 <div>
                     <h4 class="font-bold text-stone-800">Keaslian Terjamin</h4>
-                    <p class="text-sm text-stone-600">
-                        Dilengkapi Sertifikat Digital (UUID: <span class="font-mono bg-amber-100 px-1 rounded">{{ substr($artwork->certificate->certificate_code ?? 'Generating...', 0, 8) }}...</span>)
-                    </p>
+                    <p class="text-sm text-stone-600">Dilengkapi Sertifikat Digital ArtNusa.</p>
                 </div>
             </div>
         </div>
@@ -26,22 +30,10 @@
             </div>
 
             <div class="grid grid-cols-2 gap-4 py-6 border-y border-stone-200">
-                <div>
-                    <span class="block text-stone-400 text-xs uppercase tracking-wider">Material</span>
-                    <span class="font-medium">{{ $artwork->material }}</span>
-                </div>
-                <div>
-                    <span class="block text-stone-400 text-xs uppercase tracking-wider">Dimensi</span>
-                    <span class="font-medium">{{ $artwork->dimensions }}</span>
-                </div>
-                <div>
-                    <span class="block text-stone-400 text-xs uppercase tracking-wider">Tahun</span>
-                    <span class="font-medium">{{ $artwork->year_created }}</span>
-                </div>
-                <div>
-                    <span class="block text-stone-400 text-xs uppercase tracking-wider">ID Sertifikat</span>
-                    <span class="font-medium text-xs truncate">{{ $artwork->certificate->certificate_code ?? '-' }}</span>
-                </div>
+                <div><span class="block text-stone-400 text-xs uppercase">Material</span><span class="font-medium">{{ $artwork->material }}</span></div>
+                <div><span class="block text-stone-400 text-xs uppercase">Dimensi</span><span class="font-medium">{{ $artwork->dimensions }}</span></div>
+                <div><span class="block text-stone-400 text-xs uppercase">Tahun</span><span class="font-medium">{{ $artwork->year_created }}</span></div>
+                <div><span class="block text-stone-400 text-xs uppercase">ID Sertifikat</span><span class="font-medium text-xs truncate">{{ $artwork->certificate->certificate_code ?? 'Generating...' }}</span></div>
             </div>
 
             <div>
@@ -52,28 +44,91 @@
                 <p class="text-stone-600 leading-relaxed">{{ $artwork->description }}</p>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-lg">
-                @if($successMessage)
-                    <div class="bg-green-100 text-green-800 p-4 rounded-xl mb-4 text-center">
-                        <i class="fa-solid fa-check-circle mr-2"></i> {{ $successMessage }}
-                    </div>
-                @elseif($artwork->status == 'sold')
+            <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-lg sticky bottom-4">
+                
+                @if($artwork->status == 'sold')
                     <button disabled class="w-full bg-stone-300 text-stone-500 font-bold py-4 rounded-xl cursor-not-allowed">
                         Karya Sudah Terjual
                     </button>
+
+                @elseif(Auth::check() && Auth::id() == $artwork->user_id)
+                    <div class="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-xl text-center">
+                        <i class="fa-solid fa-user-lock text-2xl mb-2"></i>
+                        <p class="font-bold">Ini adalah karya Anda sendiri.</p>
+                        <p class="text-sm mb-2">Anda tidak dapat membeli karya milik sendiri.</p>
+                        <a href="{{ route('artwork.edit', $artwork->id) }}" class="inline-block px-4 py-2 bg-white border border-amber-300 rounded-lg text-sm font-bold hover:bg-amber-100">
+                            <i class="fa-solid fa-pen mr-1"></i> Edit Karya Ini
+                        </a>
+                    </div>
+
                 @else
                     <div class="flex justify-between items-end mb-6">
                         <span class="text-stone-500">Harga</span>
                         <span class="text-3xl font-bold text-stone-900">Rp {{ number_format($artwork->price, 0, ',', '.') }}</span>
                     </div>
-                    <button wire:click="buyNow" class="w-full bg-stone-900 text-white font-bold py-4 rounded-xl hover:bg-amber-700 transition shadow-lg hover:shadow-amber-900/20">
-                        Beli Sekarang
-                    </button>
-                    <p class="text-xs text-center text-stone-400 mt-3">
-                        <i class="fa-solid fa-lock mr-1"></i> Transaksi Aman & Terpercaya
-                    </p>
+                    
+                    <div class="flex gap-3">
+                        <button wire:click="addToCart" class="flex-1 border-2 border-stone-900 text-stone-900 font-bold py-3 rounded-xl hover:bg-stone-50 transition">
+                            <i class="fa-solid fa-cart-plus mr-2"></i> Keranjang
+                        </button>
+                        
+                        <button wire:click="openPaymentModal" class="flex-1 bg-stone-900 text-white font-bold py-3 rounded-xl hover:bg-amber-700 transition shadow-lg">
+                            Beli Sekarang
+                        </button>
+                    </div>
                 @endif
             </div>
         </div>
     </div>
+
+    @if($showPaymentModal)
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
+            
+            <div class="bg-stone-50 px-6 py-4 border-b border-stone-200 flex justify-between items-center">
+                <h3 class="font-bold text-lg text-stone-800">Pilih Pembayaran</h3>
+                <button wire:click="$set('showPaymentModal', false)" class="text-stone-400 hover:text-red-500">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-4">
+                <p class="text-sm text-stone-500">Anda akan membeli karya <span class="font-bold text-stone-800">"{{ $artwork->title }}"</span>.</p>
+
+                <div class="space-y-3">
+                    <label class="flex items-center gap-3 p-3 border border-stone-200 rounded-xl cursor-pointer hover:border-amber-500 hover:bg-amber-50 transition group">
+                        <input type="radio" wire:model="paymentMethod" value="transfer" class="accent-amber-600">
+                        <div class="flex-1">
+                            <div class="font-bold text-stone-800 text-sm">Transfer Bank (Manual)</div>
+                            <div class="text-xs text-stone-400">BCA, BRI, Mandiri</div>
+                        </div>
+                        <i class="fa-solid fa-building-columns text-stone-300 group-hover:text-amber-600"></i>
+                    </label>
+
+                    <label class="flex items-center gap-3 p-3 border border-stone-200 rounded-xl cursor-pointer hover:border-amber-500 hover:bg-amber-50 transition group">
+                        <input type="radio" wire:model="paymentMethod" value="ewallet" class="accent-amber-600">
+                        <div class="flex-1">
+                            <div class="font-bold text-stone-800 text-sm">E-Wallet / QRIS</div>
+                            <div class="text-xs text-stone-400">GoPay, OVO, Dana</div>
+                        </div>
+                        <i class="fa-solid fa-qrcode text-stone-300 group-hover:text-amber-600"></i>
+                    </label>
+                </div>
+
+                <div class="flex justify-between items-center pt-4 border-t border-stone-100">
+                    <span class="text-sm font-bold text-stone-600">Total Tagihan</span>
+                    <span class="text-xl font-bold text-amber-700">Rp {{ number_format($artwork->price, 0, ',', '.') }}</span>
+                </div>
+            </div>
+
+            <div class="p-4 bg-stone-50 border-t border-stone-200">
+                <button wire:click="processPayment" class="w-full bg-stone-900 text-white py-3 rounded-xl font-bold hover:bg-stone-800 transition flex justify-center items-center gap-2">
+                    <span>Bayar Sekarang</span>
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
+
 </div>
