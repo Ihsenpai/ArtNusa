@@ -37,9 +37,7 @@
 
                 <div class="flex items-center gap-4 shrink-0">
                     
-                    @if(!Auth::check() || Auth::user()->role == 'artist' || Auth::user()->role == 'admin')
-                        <a href="/" class="hover:text-amber-700 transition text-stone-600 text-sm font-medium hidden md:block">Galeri</a>
-                    @endif
+                    <a href="/" class="hover:text-amber-700 transition text-stone-600 text-sm font-medium hidden md:block">Galeri</a>
                     
                     <a href="/verify" class="hover:text-amber-700 transition text-stone-600 text-sm font-medium hidden md:block">Cek Sertifikat</a>
 
@@ -48,6 +46,10 @@
                         <a href="{{ route('register') }}" class="text-sm font-bold bg-stone-900 text-white px-5 py-2.5 rounded-full hover:bg-stone-700 transition">Daftar</a>
                     @else
                         @if(Auth::user()->role == 'artist')
+                            <a href="{{ route('my.artworks') }}" class="hidden md:block text-sm font-bold text-stone-600 hover:text-amber-700 mr-4">
+                                <i class="fa-solid fa-images mr-1"></i> Karya Saya
+                            </a>
+
                             <a href="/upload" class="hidden md:flex bg-amber-700 text-white px-4 py-2 rounded-full text-xs font-bold hover:bg-amber-800 transition items-center gap-2 shadow-sm mr-2">
                                 <i class="fa-solid fa-plus"></i> Jual
                             </a>

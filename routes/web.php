@@ -3,21 +3,26 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
-// Import Livewire Components
+// --- IMPORT SEMUA LIVEWIRE COMPONENTS ---
 use App\Livewire\Home;
 use App\Livewire\ArtworkDetail;
-use App\Livewire\UploadArtwork;
 use App\Livewire\CertificateVerify;
-use App\Livewire\UserProfile; // <-- JANGAN LUPA IMPORT INI
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
+use App\Livewire\UserProfile;   // Profil & Ganti Password
+use App\Livewire\UploadArtwork; // Upload Karya Baru
+use App\Livewire\MyArtworks;    // Daftar Karya Saya (Seniman)
+use App\Livewire\EditArtwork;   // Edit Karya (Seniman)
 
 /*
 |--------------------------------------------------------------------------
 | 1. PUBLIC ROUTES (Bisa diakses TANPA Login)
 |--------------------------------------------------------------------------
 */
+// Halaman depan (Galeri)
 Route::get('/', Home::class)->name('home'); 
+
+// Halaman Cek Sertifikat
 Route::get('/verify', CertificateVerify::class)->name('certificate.verify'); 
 
 /*
@@ -37,16 +42,28 @@ Route::middleware('guest')->group(function () {
 */
 Route::middleware('auth')->group(function () {
     
-    // Detail Karya (User wajib login untuk lihat detail/beli)
+    // --- FITUR UMUM (Buyer & Artist) ---
+
+    // Detail Karya (Sekarang user wajib login kalau mau lihat detail/beli)
     Route::get('/karya/{id}', ArtworkDetail::class)->name('artwork.detail');
 
-    // Menu Upload (Hanya user login)
-    Route::get('/upload', UploadArtwork::class)->name('artwork.upload');
-    
-    // Menu Profil (BARU DITAMBAHKAN)
+    // Halaman Profil (Edit Biodata, Password, Hapus Akun)
     Route::get('/profile', UserProfile::class)->name('profile');
 
-    // Logic Logout
+
+    // --- FITUR KHUSUS SENIMAN ---
+    
+    // Form Upload Karya Baru
+    Route::get('/upload', UploadArtwork::class)->name('artwork.upload');
+    
+    // Daftar "Karya Saya" (Manajemen Stok)
+    Route::get('/my-artworks', MyArtworks::class)->name('my.artworks');
+    
+    // Form Edit Karya
+    Route::get('/karya/{id}/edit', EditArtwork::class)->name('artwork.edit');
+
+
+    // --- LOGIC LOGOUT ---
     Route::post('/logout', function () {
         Auth::logout();
         session()->invalidate();
