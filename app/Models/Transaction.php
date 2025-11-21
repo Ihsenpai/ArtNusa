@@ -17,6 +17,7 @@ class Transaction extends Model
         'platform_fee',
         'artist_revenue',
         'status',
+        'payment_method',
     ];
 
     protected $casts = [

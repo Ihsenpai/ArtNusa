@@ -45,6 +45,7 @@ class CartPage extends Component
                     'platform_fee' => $price * 0.1,
                     'artist_revenue' => $price * 0.9,
                     'status' => 'pending',
+                    'payment_method' => $this->paymentMethod,
                 ]);
 
                 // Tandai Sold

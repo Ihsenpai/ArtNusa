@@ -75,6 +75,7 @@ class ArtworkDetail extends Component
             'platform_fee' => $price * 0.1, // 10% Fee
             'artist_revenue' => $price * 0.9, // 90% Seniman
             'status' => 'pending',
+            'payment_method' => $this->paymentMethod,
         ]);
 
         // Tandai Terjual
