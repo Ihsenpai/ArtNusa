@@ -12,13 +12,25 @@
             <div class="rounded-2xl overflow-hidden shadow-2xl border border-stone-200 bg-white p-2">
                 <img src="{{ asset('storage/'.$artwork->image_path) }}" class="w-full rounded-xl">
             </div>
-            <div class="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-4">
-                <div class="bg-white p-3 rounded-full shadow-sm text-amber-600">
-                    <i class="fa-solid fa-shield-halved text-2xl"></i>
-                </div>
-                <div>
-                    <h4 class="font-bold text-stone-800">Keaslian Terjamin</h4>
-                    <p class="text-sm text-stone-600">Dilengkapi Sertifikat Digital ArtNusa.</p>
+
+            <div class="mt-6 bg-white border border-stone-200 rounded-2xl p-6 shadow-sm">
+                <div class="flex items-start gap-4">
+                    
+                    <div class="bg-white p-1 border border-stone-200 rounded-lg shrink-0">
+                        {{ QrCode::size(85)->generate(route('certificate.verify', ['code' => $artwork->certificate->certificate_code])) }}
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-stone-900 flex items-center gap-2">
+                            <i class="fa-solid fa-certificate text-amber-600"></i>
+                            Sertifikat Digital
+                        </h4>
+                        <p class="text-xs text-stone-500 mt-1 mb-2">Scan QR Code ini untuk memverifikasi keaslian karya secara digital.</p>
+                        
+                        <div class="bg-stone-100 p-2 rounded text-[10px] font-mono text-stone-600 break-all border border-stone-200">
+                            ID: {{ substr($artwork->certificate->certificate_code, 0, 15) }}...
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -112,4 +124,5 @@
         </div>
     </div>
     @endif
+
 </div>

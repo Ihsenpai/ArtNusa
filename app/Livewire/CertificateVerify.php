@@ -7,16 +7,28 @@ use App\Models\Certificate;
 
 class CertificateVerify extends Component
 {
-    public $code;
-    public $result = null;
+    public $code;       // Kode inputan user
+    public $result;     // Hasil pencarian
     public $notFound = false;
+
+    // Fungsi ini jalan otomatis saat halaman dibuka
+    public function mount($code = null)
+    {
+        // Jika ada kode di URL (hasil scan QR), langsung verifikasi!
+        if ($code) {
+            $this->code = $code;
+            $this->verify();
+        }
+    }
 
     public function verify()
     {
+        // Cari sertifikat berdasarkan kode unik
         $this->result = Certificate::with('artwork.user')
             ->where('certificate_code', $this->code)
             ->first();
 
+        // Tentukan status ketemu atau tidak
         $this->notFound = $this->result ? false : true;
     }
 
