@@ -95,25 +95,7 @@
             <div class="p-6 space-y-4">
                 <p class="text-sm text-stone-500">Anda akan membeli karya <span class="font-bold text-stone-800">"{{ $artwork->title }}"</span>.</p>
 
-                <div class="space-y-3">
-                    <label class="flex items-center gap-3 p-3 border border-stone-200 rounded-xl cursor-pointer hover:border-amber-500 hover:bg-amber-50 transition group">
-                        <input type="radio" wire:model="paymentMethod" value="transfer" class="accent-amber-600">
-                        <div class="flex-1">
-                            <div class="font-bold text-stone-800 text-sm">Transfer Bank (Manual)</div>
-                            <div class="text-xs text-stone-400">BCA, BRI, Mandiri</div>
-                        </div>
-                        <i class="fa-solid fa-building-columns text-stone-300 group-hover:text-amber-600"></i>
-                    </label>
-
-                    <label class="flex items-center gap-3 p-3 border border-stone-200 rounded-xl cursor-pointer hover:border-amber-500 hover:bg-amber-50 transition group">
-                        <input type="radio" wire:model="paymentMethod" value="ewallet" class="accent-amber-600">
-                        <div class="flex-1">
-                            <div class="font-bold text-stone-800 text-sm">E-Wallet / QRIS</div>
-                            <div class="text-xs text-stone-400">GoPay, OVO, Dana</div>
-                        </div>
-                        <i class="fa-solid fa-qrcode text-stone-300 group-hover:text-amber-600"></i>
-                    </label>
-                </div>
+                <x-payment-selector :paymentMethod="$paymentMethod" />
 
                 <div class="flex justify-between items-center pt-4 border-t border-stone-100">
                     <span class="text-sm font-bold text-stone-600">Total Tagihan</span>
@@ -130,5 +112,4 @@
         </div>
     </div>
     @endif
-
 </div>

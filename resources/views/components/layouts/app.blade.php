@@ -84,15 +84,14 @@
                                     <i class="fa-solid fa-gear w-6 text-center mr-2"></i> Pengaturan Akun
                                 </a>
 
+                                <a href="{{ route('my.transactions') }}" class="block px-4 py-2 text-sm text-stone-700 hover:bg-amber-50 hover:text-amber-700 transition">
+                                    <i class="fa-solid fa-receipt w-6 text-center mr-2"></i> Riwayat Pembelian
+                                </a>
+
                                 <div class="md:hidden border-t border-stone-100 my-1"></div>
                                 <a href="/" class="block px-4 py-2 text-sm text-stone-700 hover:bg-amber-50 hover:text-amber-700 md:hidden">
                                     <i class="fa-solid fa-shop w-6 text-center mr-2"></i> Galeri
                                 </a>
-                                @if(Auth::user()->role == 'artist')
-                                    <a href="{{ route('my.artworks') }}" class="block px-4 py-2 text-sm text-stone-700 hover:bg-amber-50 hover:text-amber-700 md:hidden">
-                                        <i class="fa-solid fa-images w-6 text-center mr-2"></i> Karya Saya
-                                    </a>
-                                @endif
 
                                 <div class="border-t border-stone-100 my-1"></div>
                                 
@@ -111,6 +110,7 @@
                             @php
                                 $cartCount = \App\Models\Cart::where('user_id', Auth::id())->count();
                             @endphp
+                            
                             @if($cartCount > 0)
                                 <span class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white animate-bounce">
                                     {{ $cartCount }}
@@ -132,13 +132,11 @@
         <div class="max-w-7xl mx-auto px-4">
             <p class="font-serif text-white text-xl mb-2">ArtNusa</p>
             <p class="text-sm mb-6 text-stone-500">Platform Digital Penjualan Karya Lukis Tradisional Indonesia.</p>
-            
             <div class="flex justify-center gap-6 mb-8">
                 <a href="#" class="hover:text-white transition"><i class="fa-brands fa-instagram text-xl"></i></a>
                 <a href="#" class="hover:text-white transition"><i class="fa-brands fa-facebook text-xl"></i></a>
                 <a href="#" class="hover:text-white transition"><i class="fa-brands fa-twitter text-xl"></i></a>
             </div>
-
             <p class="text-xs text-stone-600 pt-6 border-t border-stone-800">
                 &copy; {{ date('Y') }} Kelompok 4 Kewirausahaan - Universitas Jenderal Soedirman.
             </p>
@@ -146,4 +144,4 @@
     </footer>
 
 </body>
-</html>   
+</html>
