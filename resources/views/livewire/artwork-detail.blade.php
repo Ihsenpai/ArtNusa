@@ -16,8 +16,16 @@
             <div class="mt-6 bg-white border border-stone-200 rounded-2xl p-6 shadow-sm">
                 <div class="flex items-start gap-4">
                     
-                    <div class="bg-white p-1 border border-stone-200 rounded-lg shrink-0">
-                        {{ QrCode::size(85)->generate(route('certificate.verify', ['code' => $artwork->certificate->certificate_code])) }}
+                    <div class="flex flex-col items-center shrink-0">
+                        <div class="bg-white p-1 border border-stone-200 rounded-lg">
+                            {{ QrCode::size(85)->generate(route('certificate.verify', ['code' => $artwork->certificate->certificate_code])) }}
+                        </div>
+                        
+                        <a href="{{ route('certificate.verify', ['code' => $artwork->certificate->certificate_code]) }}" 
+                           target="_blank" 
+                           class="mt-2 text-[10px] bg-amber-50 text-amber-700 px-2 py-1 rounded border border-amber-200 hover:bg-amber-100 transition font-bold text-center w-full flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Buka Link
+                        </a>
                     </div>
 
                     <div>
@@ -25,7 +33,7 @@
                             <i class="fa-solid fa-certificate text-amber-600"></i>
                             Sertifikat Digital
                         </h4>
-                        <p class="text-xs text-stone-500 mt-1 mb-2">Scan QR Code ini untuk memverifikasi keaslian karya secara digital.</p>
+                        <p class="text-xs text-stone-500 mt-1 mb-2">Scan QR Code di samping untuk memverifikasi keaslian karya secara digital.</p>
                         
                         <div class="bg-stone-100 p-2 rounded text-[10px] font-mono text-stone-600 break-all border border-stone-200">
                             ID: {{ substr($artwork->certificate->certificate_code, 0, 15) }}...
@@ -45,7 +53,7 @@
                 <div><span class="block text-stone-400 text-xs uppercase">Material</span><span class="font-medium">{{ $artwork->material }}</span></div>
                 <div><span class="block text-stone-400 text-xs uppercase">Dimensi</span><span class="font-medium">{{ $artwork->dimensions }}</span></div>
                 <div><span class="block text-stone-400 text-xs uppercase">Tahun</span><span class="font-medium">{{ $artwork->year_created }}</span></div>
-                <div><span class="block text-stone-400 text-xs uppercase">ID Sertifikat</span><span class="font-medium text-xs truncate">{{ $artwork->certificate->certificate_code ?? 'Generating...' }}</span></div>
+                <div><span class="block text-stone-400 text-xs uppercase">ID Sertifikat</span><span class="font-medium text-xs truncate">{{ substr($artwork->certificate->certificate_code, 0, 8) }}...</span></div>
             </div>
 
             <div>

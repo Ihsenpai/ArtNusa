@@ -9,12 +9,12 @@ use App\Livewire\ArtworkDetail;
 use App\Livewire\CertificateVerify;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
-use App\Livewire\UserProfile;   // Profil & Ganti Password
-use App\Livewire\UploadArtwork; // Upload Karya Baru
-use App\Livewire\MyArtworks;    // Daftar Karya Saya (Seniman)
-use App\Livewire\EditArtwork;   // Edit Karya (Seniman)
-use App\Livewire\CartPage;      // Keranjang Belanja
-use App\Livewire\MyTransactions; // Riwayat Transaksi (BARU)
+use App\Livewire\UserProfile;    // Profil & Ganti Password
+use App\Livewire\UploadArtwork;  // Upload Karya Baru
+use App\Livewire\MyArtworks;     // Daftar Karya Saya (Seniman)
+use App\Livewire\EditArtwork;    // Edit Karya (Seniman)
+use App\Livewire\CartPage;       // Keranjang Belanja
+use App\Livewire\MyTransactions; // Riwayat Transaksi
 
 /*
 |--------------------------------------------------------------------------
@@ -24,8 +24,8 @@ use App\Livewire\MyTransactions; // Riwayat Transaksi (BARU)
 // Halaman depan (Galeri)
 Route::get('/', Home::class)->name('home'); 
 
-// Halaman Cek Sertifikat
-Route::get('/verify', CertificateVerify::class)->name('certificate.verify'); 
+// Halaman Cek Sertifikat (Bisa terima parameter code dari QR Scan)
+Route::get('/verify/{code?}', CertificateVerify::class)->name('certificate.verify'); 
 
 /*
 |--------------------------------------------------------------------------
@@ -55,7 +55,7 @@ Route::middleware('auth')->group(function () {
     // Keranjang Belanja
     Route::get('/cart', CartPage::class)->name('cart');
 
-    // Riwayat Pembelian (Laporan Transaksi) 
+    // Riwayat Pembelian (Laporan Transaksi)
     Route::get('/my-transactions', MyTransactions::class)->name('my.transactions');
 
 

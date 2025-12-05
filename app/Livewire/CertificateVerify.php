@@ -14,15 +14,22 @@ class CertificateVerify extends Component
     // Fungsi ini jalan otomatis saat halaman dibuka
     public function mount($code = null)
     {
-        // Jika ada kode di URL (hasil scan QR), langsung verifikasi!
-        if ($code) {
-            $this->code = $code;
+        // LOGIC PINTAR:
+        // 1. Cek apakah kode ada di Route (/verify/kode)
+        // 2. Kalau tidak ada, cek di Query String (?code=kode) <- Ini penting buat Scan QR
+        $this->code = $code ?? request()->query('code');
+
+        // Jika kode ditemukan otomatis, langsung jalankan verifikasi
+        if ($this->code) {
             $this->verify();
         }
     }
 
     public function verify()
     {
+        // Validasi: Jangan cari kalau kode kosong
+        if (!$this->code) return;
+
         // Cari sertifikat berdasarkan kode unik
         $this->result = Certificate::with('artwork.user')
             ->where('certificate_code', $this->code)
